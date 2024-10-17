@@ -8,10 +8,10 @@ import matplotlib.dates as mdates
 import numpy as np 
 from datetime import datetime,timedelta
 from scipy.interpolate import griddata,interp1d
+import lenapy as ly
 
-from ASELSU.specific_tools.WP85.covariance_matrix import make_covariance_matrix
-from ASELSU.specific_tools.WP85.gmsl_tools import polynomialGLS, polynomialOLS 
-from ASELSU.common_tools.time_tools import decimalyears_to_julianday_array
+from aselsu.specific_tools.gmsl_tools import polynomialGLS, polynomialOLS 
+from aselsu.common_tools.time_tools import decimalyears_to_julianday_array
 
 cmap_div = palettable.scientific.diverging.Vik_20.mpl_colormap
 cmap_seq = palettable.scientific.sequential.Imola_20.mpl_colormap
@@ -233,21 +233,19 @@ def sigma_to_confidence_interval_object(min_sigma, max_sigma, number_measures):
         y[ii] = u/tot
     return interp1d(x,y,kind='linear', bounds_error=False,fill_value=1.)
     
-def fractal_trend_uncertainties_interp(times_in, dico_errors, eval_dico, interp_dico, covar_mat = None, least_squares_method='OLS', yvar=None, verbose=0):
+def fractal_trend_uncertainties_interp(times_in, eval_dico, interp_dico, covar_mat = None, least_squares_method='OLS', yvar=None, verbose=0):
     """ Compute uncertainties at all time scales for uncertainty trees
 
     Parameters
     ----------
     times_in:
         time array in units used in error description dictionnary (usually julian days)
-    dico_errors:
-        dictionnary of error description (from load_error_list_prescription_from_file)
     eval_dico:
         dictionnary of parameters for the computation of initial uncertainty data
     interp_dico:
         dictionnary of parameters for the interpolation of initial uncertainty data
     covar_mat:
-        numpy array of covariance matrix (instead of dico_errors)
+        numpy array of covariance matrix
     least_squares_method:
         least-squares method ['OLS'|'GLS']
     """
@@ -300,7 +298,7 @@ def fractal_trend_uncertainties_interp(times_in, dico_errors, eval_dico, interp_
 
     #covar_errors
     var_out_filled = False
-    if dico_errors is not None or covar_mat is not None:
+    if covar_mat is not None:
         count = 0
         count1 = 0
         for it in range(nn):
@@ -318,10 +316,7 @@ def fractal_trend_uncertainties_interp(times_in, dico_errors, eval_dico, interp_
                 if it_max > n_times:
                     it_max = n_times
                 if it_max-it_min > 2:
-                    if dico_errors is not None:
-                        covar_errors = make_covariance_matrix(dico_errors, times_in[it_min:it_max], individual_errors=False)
-                        covar = covar_errors.covar
-                    elif covar_mat is not None:
+                    if covar_mat is not None:
                         covar = covar_mat[it_min:it_max,it_min:it_max]
                     full_period = times_in[it_max-1]-times_in[it_min]
                     #H: prediction matrix with annual and semi-annual components
@@ -448,7 +443,7 @@ def fractal_trend_uncertainties_interp(times_in, dico_errors, eval_dico, interp_
             'period_eval': timespans_eval, 'uncertainties_eval': var_uncertainties_eval,'trends':var_trends_interp}
     
 
-def timeserie_plot(time_vec, msl,msl_orig,covar,lGLS,label, lGLS_2=None,label2=None, output_path=None):
+def timeserie_plot(time_vec, msl,msl_orig,covar,OLS,label,GLS=None,label2=None, output_path=None):
     u = np.sqrt(np.diag(covar))
 
     dates = np.array([datetime(1950,1,1) + timedelta(el) for el in time_vec])
@@ -456,11 +451,11 @@ def timeserie_plot(time_vec, msl,msl_orig,covar,lGLS,label, lGLS_2=None,label2=N
     ax = fig.add_subplot(1,1,1)
     ax.plot(dates, msl*1000., ls='-', lw=1, color='black', label='GMSL')
     ax.plot(dates, msl_orig*1000., ls='--', lw=1, color='black', label='GMSL without correction')
-    ax.plot(dates, lGLS['reconstruction']*1000., ls='--', lw=1, marker=None, color='red', label='                    %s: \nTrend = %.2f +/- %.2f mm/yr \nAcceleration = %.2f +/- %.2f mm/yr/dec'%(label,lGLS['coefficients'][1]*1000.*365.25, \
-        lGLS['uncertainties'][1]*1000.*365.25, lGLS['coefficients'][2]*1000.*365.25*(365.25*10)*2., lGLS['uncertainties'][2]*1000.*365.25*(365.25*10)*2.))   
-    if lGLS_2 != None:
-        ax.plot(dates, lGLS_2['reconstruction']*1000., ls='-.', lw=1, marker=None, color='blue', label='                    %s: \nTrend = %.2f +/- %.2f mm/yr \nAcceleration = %.2f +/- %.2f mm/yr/dec'%(label2,lGLS_2['coefficients'][1]*1000.*365.25, \
-            lGLS_2['uncertainties'][1]*1000.*365.25, lGLS_2['coefficients'][2]*1000.*365.25*(365.25*10)*2., lGLS_2['uncertainties'][2]*1000.*365.25*(365.25*10)*2.))    
+    ax.plot(dates, OLS.estimate*1000., ls='--', lw=1, marker=None, color='red', label='                    %s: \nTrend = %.2f +/- %.2f mm/yr \nAcceleration = %.2f +/- %.2f mm/yr/dec'%(label,OLS.coefficients[1]*1000.*365.25, \
+        OLS.uncertainties[1]*1000.*365.25, OLS.coefficients[2]*1000.*365.25*(365.25*10)*2., OLS.uncertainties[2]*1000.*365.25*(365.25*10)*2.))   
+    if GLS != None:
+        ax.plot(dates, GLS.estimate*1000., ls='-.', lw=1, marker=None, color='blue', label='                    %s: \nTrend = %.2f +/- %.2f mm/yr \nAcceleration = %.2f +/- %.2f mm/yr/dec'%(label2,GLS.coefficients[1]*1000.*365.25, \
+            GLS.uncertainties[1]*1000.*365.25, GLS.coefficients[2]*1000.*365.25*(365.25*10)*2., GLS.uncertainties[2]*1000.*365.25*(365.25*10)*2.))    
     
     plt.fill_between(dates, (msl-u)*1000., (msl+u)*1000., ls='-', lw=1, color='k', alpha=0.2, zorder=100.)
     ax.set_xlim([dates[0], dates[-1]])
@@ -472,83 +467,4 @@ def timeserie_plot(time_vec, msl,msl_orig,covar,lGLS,label, lGLS_2=None,label2=N
     ax.legend(fontsize=12, loc='upper left', fancybox=True, shadow=True)
     if output_path!=None:
         plt.savefig(output_path, dpi=600, bbox_inches = 'tight', pad_inches = 0)
-    plt.show()
-
-def plot_covar(covar, time_vec, name, ymin=None, ymax=None, ngen=30, lim=None, ylim=None):
-    dates = np.array([datetime(1950,1,1) + timedelta(el) for el in time_vec])
-    var = covar #*10000.
-    
-    nice_fonts = {
-        "font.family": "serif",
-        #"font.weight":"bold",
-        "axes.labelsize": 10,
-        "font.size": 10,
-        "legend.fontsize": 8,
-        "xtick.labelsize": 8,
-        "ytick.labelsize": 8,
-        }
-
-    mpl.rcParams.update(nice_fonts)
-    width = 482
-    fig = plt.figure(figsize=(10, 8))
-    
-    # Matrice covariance 
-    ax = fig.add_subplot(2, 2, 2) # 2 rows, 2 column, 1er plot
-    if lim is None:
-        vlim = np.max(np.abs(var))
-    else:
-        vlim = lim
-    m = ax.pcolormesh(var, cmap='RdBu_r', vmin=-vlim, vmax=vlim)
-
-    # Colorbar
-    cb = fig.colorbar(m)
-    cb.ax.get_yaxis().labelpad = 15
-    cb.ax.tick_params(labelsize=8)
-    cb.ax.set_ylabel('Covariance of errors', rotation=270)
-
-    #Affichage des dates 
-    time=[]
-    time.append('')
-    for i in range(1, len(dates), 111):
-        time.append(dates[i])
-    majorLocator = MultipleLocator(111)
-    ax.xaxis.set_major_locator(majorLocator)
-    ax.set_xticklabels([str(l)[0:4] for l in time], size='medium')
-    ax.yaxis.set_major_locator(majorLocator)
-    ax.set_yticklabels([str(l)[0:4] for l in time], size='medium')
-    ax.tick_params(labelsize=8)
-
-    # Uncertainty 
-    ax = fig.add_subplot(2, 2, 1) # 2 rows, 2 column, 2e plot
-    if ymin is None:
-        ymin = np.min(np.sqrt(np.diag(var)))
-        ymax = np.max(np.sqrt(np.diag(var)))
-    else:
-        ymin = ymin
-        ymax = ymax
-    ax.set_ylim([ymin, ymax])
-    plt.plot(dates, np.sqrt(np.diag(var))) 
-    plt.ylabel('Uncertainty envelope')
-    ax.xaxis.set_major_locator(mdates.YearLocator(5))
-    ax.xaxis.set_minor_locator(mdates.YearLocator())   
-    ax.tick_params(labelsize=8)
-
-    # Spread 
-    ax = fig.add_subplot(2, 2, 4) # 2 rows, 2 column, 3e plot
-    A = np.dot(np.linalg.cholesky(covar), np.random.randn(len(time_vec), ngen))
-
-    if ylim is None:
-        ylim = np.max(np.abs(A))
-    else:
-        ylim = ylim 
-        
-    for ii in range(ngen):
-        plt.plot(dates, A[:,ii])
-
-    ax.set_ylim([-ylim, ylim])
-    ax.xaxis.set_major_locator(mdates.YearLocator(5))
-    ax.xaxis.set_minor_locator(mdates.YearLocator())   
-    ax.tick_params(labelsize=8)
-
-    #plt.tight_layout()
     plt.show()

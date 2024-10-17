@@ -4,7 +4,7 @@ import netCDF4
 from datetime import datetime,timedelta
 import time
 from scipy.interpolate import griddata,interp1d
-from ASELSU.common_tools.time_tools import julianday_to_decimalyears_array,datetime_to_decimalyears
+from aselsu.common_tools.time_tools import julianday_to_decimalyears_array,datetime_to_decimalyears
 
 ## Corrections functions
 ### TOPEX-A correction
