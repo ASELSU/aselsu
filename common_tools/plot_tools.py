@@ -325,13 +325,8 @@ def fractal_trend_uncertainties_interp(times_in, eval_dico, interp_dico, covar_m
                     #~ try:
                     if least_squares_method.upper() == 'GLS':
                         est = yvar[it_min:it_max].lntime.GLS(degree=2,sigma=covar,datetime_unit="d")
-                        #est = polynomialGLS(times_in[it_min:it_max]/full_period, yvar[it_min:it_max], covar, 
-                        #                    order=2, periods=[], out_comp=True, use_fit_uncertainty=False)
                     elif least_squares_method.upper() == 'OLS':
                         est = yvar[it_min:it_max].lntime.OLS(degree=2,sigma=covar,datetime_unit="d")
-                        #est = polynomialOLS(decimalyears_to_julianday_array(times_in[it_min:it_max]), yvar[it_min:it_max], 
-                        #                    order=2, periods=[], out_comp=True, covar_matrix_for_error=covar)
-                        #R, U, _ = formulaOLS(H, yvar[it_min:it_max], covar_matrix_for_error=covar)
                     else:
                         raise IOError('least squares method %s unknown'%least_squares_method)
                     U = est.uncertainties
