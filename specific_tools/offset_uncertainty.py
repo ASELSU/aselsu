@@ -42,4 +42,11 @@ def compute_bias(gmsl_diff,ii,verbose=True):
         uncertainty = s/np.sqrt(n) 
         
     return uncertainty,n
-  
+
+def masked_mean_along_axis(arr, axis):
+    # If any element is masked along the axis, mask the result    
+    mean_values = np.ma.mean(arr, axis=axis)
+    mask_along_axis = np.any(np.isnan(arr), axis=axis)
+    mean_values[mask_along_axis.values] = np.ma.masked
+
+    return mean_values

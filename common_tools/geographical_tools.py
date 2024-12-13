@@ -147,3 +147,18 @@ def pond_grid(dlon: Optional[int] = 3, dlat: Optional[int] = 1):
     ponderation_grid[np.abs(lat) > latmax, :] = 0.
 
     return lat, cell_surface, ponderation_grid
+
+def weighted_standard_deviation(grid, cell_surface, weight, lat):
+    """
+    Calculate the weighted standard deviation.
+
+    grid: 2D array of data values
+    cell_surface: 2D array of grid cell areas
+    weigh: Ponderation grid
+
+    Returns: Weighted standard deviation
+    """
+    
+    weighted_mean = meanvar(grid, weight, latmax=66.6, lat=lat,percent_valid_min=40.)
+    variance = np.sum(cell_surface * (grid - weighted_mean)**2) / (np.sum(cell_surface)-1)
+    return np.sqrt(variance)
