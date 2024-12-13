@@ -132,7 +132,7 @@ def pond_grid(dlon: Optional[int] = 3, dlat: Optional[int] = 1):
         - ponderation_grid: Array of ponderation weights for the grid,
     :rtype: tuple (numpy.ndarray, numpy.ndarray, numpy.ndarray)
     """
-    ds_water_ratio = xr.open_dataset('/aselsu/input_data/ocean_surface_ratio_%i_%i.nc' % (dlon, dlat))
+    ds_water_ratio = xr.open_dataset('input_data/ocean_surface_ratio_%i_%i.nc' % (dlon, dlat))
     lat_edge = ds_water_ratio.latitude_edge.values
     lon_edge = ds_water_ratio.longitude_edge.values
     lat = 0.5 * (lat_edge[0: -1] + lat_edge[1:])
@@ -147,4 +147,3 @@ def pond_grid(dlon: Optional[int] = 3, dlat: Optional[int] = 1):
     ponderation_grid[np.abs(lat) > latmax, :] = 0.
 
     return lat, cell_surface, ponderation_grid
-
