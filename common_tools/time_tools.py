@@ -1,11 +1,7 @@
-import xarray as xr 
-import numpy as np 
-import netCDF4
-from datetime import datetime,timedelta
+import numpy as np
 import time
-from scipy.interpolate import griddata,interp1d
-import matplotlib.pyplot as plt
-import matplotlib as mpl
+from datetime import datetime,timedelta
+
 
 def datetime_to_decimalyears(datetime_obj):
     

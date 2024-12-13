@@ -39,6 +39,11 @@ def load_environment_WP85():
     run_command("pip install lenapy/.")
     print('.... Done')
 
+def load_environment_WP83():
+    print('Environment loading....')
+    run_command("pip install netCDF4 gdown palettable")
+    print('.... Done')
+
 def load_data_WP85():
     print("Load GMSL timeserie\n")
     gmsl_file_id = "1sWWo6zlh3qYB13zOKneiklBWhsgT8XWW"
@@ -66,3 +71,19 @@ def load_data_WP85():
         f.write(r.content)
     
     return gmsl_file, tpa_corr_file, j3_corr_file, error_prescription
+
+
+def load_data_W83():
+    print("Load J3 & S6A gridded data during tandem phase\n")
+    tandem_file_id = "1rQGYWv8Gz7MTBwfk0mx7jIWGrq91V_9-"
+    tandem_output = "j3_s6a_3_1_tandem.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={tandem_file_id}", tandem_output, quiet=False)
+    tandem_file = tandem_output
+
+    print("Load J3 & S6A gridded data outside tandem phase\n")
+    no_tandem_file_id = "1THOB-oS_zGHnnicvWGEKuEiJ9kJ_DGFQ"
+    no_tandem_output = "j3_s6a_3_1_no_tandem.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={no_tandem_file_id}", no_tandem_output, quiet=False)
+    no_tandem_file = no_tandem_output
+
+    return tandem_file, no_tandem_file
