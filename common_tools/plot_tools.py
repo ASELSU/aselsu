@@ -8,7 +8,7 @@ import matplotlib.dates as mdates
 import numpy as np 
 from datetime import datetime,timedelta
 from scipy.interpolate import griddata,interp1d
-import lenapy as ly
+# import lenapy as ly
 
 from aselsu.common_tools.time_tools import decimalyears_to_julianday_array
 
@@ -461,6 +461,32 @@ def timeserie_plot(time_vec, msl,msl_orig,covar,OLS,label,GLS=None,label2=None, 
     for item in (ax.get_xticklabels() + ax.get_yticklabels()):
         item.set_fontsize(15)
     ax.legend(fontsize=12, loc='upper left', fancybox=True, shadow=True)
+    if output_path!=None:
+        plt.savefig(output_path, dpi=600, bbox_inches = 'tight', pad_inches = 0)
+    plt.show()
+
+def unc_evolution(unc1, label1, unc2, label2, title,
+                  unc3=None, label3=None, xlim=20., ylim=30.,
+                  cycle=10, output_path=None):
+    fig = plt.figure(figsize=(5,5))
+    ax = fig.add_subplot(1,1,1)
+
+    ax.plot(unc1, ls='-', lw=2, marker='o', color='k', label=label1)
+    ax.plot(unc2, ls='-', lw=2, color='r', label=label2)
+    if unc3 != None:
+        ax.plot(unc3, ls='--', lw=2, color='k', label=label3)
+    ax.set_xlim([0., xlim])
+    ax.set_ylim([0., ylim])
+    ax.set_axisbelow(True)
+    ax.grid(visible=True, which='major', color='gray', linestyle='-', linewidth=0.5)
+    ax.grid(visible=True, which='minor', color='gray', linestyle='-', linewidth=0.2)
+    ax.minorticks_on()
+    for item in (ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(15)
+    ax.set_xlabel('Number of %i-day cycles'%cycle, size=16)
+    ax.set_ylabel('Uncertainty (mm)', size=15)
+    ax.legend(fontsize=12, loc='upper right', fancybox=True, shadow=True)
+    plt.title(title, size=18, fontweight='bold')
     if output_path!=None:
         plt.savefig(output_path, dpi=600, bbox_inches = 'tight', pad_inches = 0)
     plt.show()
