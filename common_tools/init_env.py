@@ -73,17 +73,33 @@ def load_data_WP85():
     return gmsl_file, tpa_corr_file, j3_corr_file, error_prescription
 
 
-def load_data_WP83():
-    print("Load J3 & S6A gridded data during tandem phase\n")
-    tandem_file_id = "1rQGYWv8Gz7MTBwfk0mx7jIWGrq91V_9-"
-    tandem_output = "j3_s6a_3_1_tandem.nc"
-    gdown.download(f"https://drive.google.com/uc?export=download&id={tandem_file_id}", tandem_output, quiet=False)
-    tandem_file = tandem_output
+def load_data_WP83(mission):
+    if mission=='J3-S6A':
+        print("Load J3 & S6A gridded data during tandem phase\n")
+        tandem_file_id = "1rQGYWv8Gz7MTBwfk0mx7jIWGrq91V_9-"
+        tandem_output = "J3-S6A_3_1_tandem.nc"
+        gdown.download(f"https://drive.google.com/uc?export=download&id={tandem_file_id}", tandem_output, quiet=False)
+        tandem_file = tandem_output
 
-    print("\nLoad J3 & S6A gridded data outside tandem phase\n")
-    no_tandem_file_id = "1THOB-oS_zGHnnicvWGEKuEiJ9kJ_DGFQ"
-    no_tandem_output = "j3_s6a_3_1_no_tandem.nc"
-    gdown.download(f"https://drive.google.com/uc?export=download&id={no_tandem_file_id}", no_tandem_output, quiet=False)
-    no_tandem_file = no_tandem_output
+        print("\nLoad J3 & S6A gridded data outside tandem phase\n")
+        no_tandem_file_id = "1THOB-oS_zGHnnicvWGEKuEiJ9kJ_DGFQ"
+        no_tandem_output = "J3-S6A_3_1_no_tandem.nc"
+        gdown.download(f"https://drive.google.com/uc?export=download&id={no_tandem_file_id}", no_tandem_output, quiet=False)
+        no_tandem_file = no_tandem_output
+
+    elif mission=='J2-J3':
+        print("Load J2 & J3 gridded data during tandem phase\n")
+        tandem_file_id = "1k71IPlval_2_F0sTG-zVH1-1_rS-KHp5"
+        tandem_output = "J2-J3_3_1_tandem.nc"
+        gdown.download(f"https://drive.google.com/uc?export=download&id={tandem_file_id}", tandem_output, quiet=False)
+        tandem_file = tandem_output
+
+        print("\nLoad J2 & J3 gridded data outside tandem phase\n")
+        no_tandem_file_id = "1rUkbMzFrEIHUiHvD9SVDMX1hxHU0RKma"
+        no_tandem_output = "J2-J3_3_1_no_tandem.nc"
+        gdown.download(f"https://drive.google.com/uc?export=download&id={no_tandem_file_id}", no_tandem_output, quiet=False)
+        no_tandem_file = no_tandem_output
+    else:
+        print("\n*Error* Missions name incorrect, select 'J2-J3' or 'J3-S6A'\n")
 
     return tandem_file, no_tandem_file
