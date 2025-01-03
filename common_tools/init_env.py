@@ -103,3 +103,38 @@ def load_data_WP83(mission):
         print("\n*Error* Missions name incorrect, select 'J2-J3' or 'J3-S6A'\n")
 
     return tandem_file, no_tandem_file
+
+def load_data_S3A(mission,dlon=3,dlat=1):
+    if mission=='J3-S6A':
+        miss_comp = 'S3A-S6A'
+        if dlat==1:
+            print("Load S3A & S6A gridded data\n")
+            file_id = "1AJzdwadFbXm1eKayRT-RNSms5O7yXT8L"
+            no_tandem_output = "S3A-S6A_%i_%i_tandem.nc"%(dlon,dlat)
+            gdown.download(f"https://drive.google.com/uc?export=download&id={file_id}", no_tandem_output, quiet=False)
+        elif dlat==3:
+            print("\nLoad S3A & S6A gridded data\n")
+            file_id = "1S7qkXtdH5-ADPONndfefer98ZU3mDpEB"
+            no_tandem_output = "S3A-S6A_%i_%i_no_tandem.nc"%(dlon,dlat)
+            gdown.download(f"https://drive.google.com/uc?export=download&id={file_id}", no_tandem_output, quiet=False)
+        else:
+            print("\n*Error* Resolution incorrect, select dlat=1 or dlat=3\n")
+
+    elif mission=='J2-J3':
+        miss_comp = 'S3A-J3'
+        if dlat==1:
+            print("Load S3A & J3 gridded data\n")
+            file_id = "13zk-4r5FgUAoAVuwMPCdlqZ9Iz_2TtN4"
+            no_tandem_output = "S3A-J3_%i_%i_tandem.nc"%(dlon,dlat)
+            gdown.download(f"https://drive.google.com/uc?export=download&id={file_id}", no_tandem_output, quiet=False)
+        elif dlat==3:
+            print("\nLoad S3A & J3 gridded data\n")
+            file_id = "1l589Ezt0Bk81OKpQ01XCFfdmf_Ge_7eS"
+            no_tandem_output = "S3A-J3_%i_%i_no_tandem.nc"%(dlon,dlat)
+            gdown.download(f"https://drive.google.com/uc?export=download&id={file_id}", no_tandem_output, quiet=False)
+        else:
+            print("\n*Error* Resolution incorrect, select dlat=1 or dlat=3\n")
+    else:
+        print("\n*Error* Missions name incorrect, select 'J2-J3' or 'J3-S6A'\n")
+
+    return no_tandem_output, miss_comp
