@@ -4,6 +4,8 @@ import netCDF4
 from datetime import datetime,timedelta
 import time
 from scipy.interpolate import griddata,interp1d
+import statsmodels.api as sm
+
 from aselsu.common_tools.time_tools import julianday_to_decimalyears_array,datetime_to_decimalyears
 
 ## Corrections functions
@@ -96,3 +98,19 @@ def correct_for_jason3_wtc_drift(ncfile, jd, gmsl):
     gmsl_corr = gmsl-j3_corr_interp
 
     return gmsl_corr
+
+def remove_periods_signals(myperiods,time_jdays,ts):
+  # Define period in days
+  T = myperiods
+  omega = 2 * np.pi / T
+
+  # Design matrix for OLS: sin, cos, and constant
+  X = np.column_stack([np.sin(omega * time_jdays), np.cos(omega * time_jdays), 
+                       np.ones_like(time_jdays)])
+  ols_model = sm.OLS(ts, X).fit()
+  fitted_signal = ols_model.predict(X)
+
+  # Remove the periodic signal
+  ts -= fitted_signal
+
+  return ts
