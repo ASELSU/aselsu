@@ -544,3 +544,73 @@ def unc_evolution(unc, title,
     if output_path!=None:
         plt.savefig(output_path, dpi=600, bbox_inches = 'tight', pad_inches = 0)
     plt.show()
+
+def plot_interpolated_uncertainty_curves(uncertainty_tandem, curves_to_fit,
+                                         curves_fitted, mission, dlon, dlat,
+                                         mission_comparison):
+  fig = plt.figure(figsize=(6, 6))
+  ax = fig.add_subplot(1,1,1)
+
+  # Original curves
+  ax.plot(uncertainty_tandem, ls='-', marker='o', markersize=3, color='k',
+          label='Tandem phase')
+  ax.plot(curves_to_fit[0], ls='--', lw=2, color='k',
+          label='Outside tandem phase')
+  ax.plot(curves_to_fit[1], ls='--', lw=4, color='lightseagreen',
+          label='Outside tandem phase: '+mission_comparison)
+
+  # Interpolated curves
+  label_beg = r'Curve fit in 1/$\sqrt{n}$ for '
+  ax.plot(curves_fitted[0][0], curves_fitted[0][1], lw=2, color='grey',
+          label=label_beg + mission + '\nPlateau at '+str(np.round(curves_fitted[0][3],2))+' mm')
+  ax.plot(curves_fitted[1][0], curves_fitted[1][1], lw=2, color='b',
+          label=label_beg + mission_comparison + '\nPlateau at '+str(np.round(curves_fitted[1][3],2))+' mm')
+
+  ax.set_xlim([0., 100.])
+  ax.set_ylim([0., 35.])
+  ax.set_axisbelow(True)
+  ax.grid(visible=True, which='major', color='gray', linestyle='-', linewidth=0.5)
+  ax.grid(visible=True, which='minor', color='gray', linestyle='-', linewidth=0.2)
+  ax.minorticks_on()
+  for item in (ax.get_xticklabels() + ax.get_yticklabels()):
+      item.set_fontsize(15)
+  ax.set_xlabel('Number of 10-day cycles', size=16)
+  ax.set_ylabel(r'$\sigma$($\Delta$SLA) (mm)', size=15)
+  ax.legend(fontsize=12, loc='upper right', fancybox=True, shadow=True)
+
+  plt.title('%s comparison\n%i°*%i° cell grid - REGIONAL'%(mission,dlon,dlat))
+  plt.show()
+
+def plot_required_days_outside_tandem(corr_nb_days_outside_tandem_std_main,
+                                      corr_nb_days_outside_tandem_std_comp,
+                                      perf_values, mission,
+                                      mission_comparison):
+  plt.figure()
+  # Put an upper limit on the nb of days values
+  corr_nb_days_outside_tandem_std_main = np.where(
+      corr_nb_days_outside_tandem_std_main > 1e5, 1e5,
+      corr_nb_days_outside_tandem_std_main)
+  corr_nb_days_outside_tandem_std_comp = np.where(
+      corr_nb_days_outside_tandem_std_comp > 1e5, 1e5,
+      corr_nb_days_outside_tandem_std_comp)
+
+  plt.plot(perf_values, np.array(corr_nb_days_outside_tandem_std_main), '.-',
+           lw=2, label=mission)
+  plt.plot(perf_values, np.array(corr_nb_days_outside_tandem_std_comp), '.-',
+           lw=2, label=mission_comparison)
+  plt.hlines(365.25,0,21, lw=2, color='k') # 1 yr horizontal line
+  plt.hlines(365.25*3,0,21, lw=2, ls='dashed', color='k',label='1/3/6/10 years')
+  plt.hlines(365.25*6,0,21, lw=2, ls='dashdot', color='k') # 6yrs horizontal line
+  plt.hlines(365.25*10,0,21, lw=2, ls='dotted', color='k')
+
+  plt.legend()
+  plt.grid(visible=True, which='major', color='gray', linestyle='-', linewidth=0.5)
+  plt.grid(visible=True, which='minor', color='gray', linestyle='-', linewidth=0.2)
+  plt.minorticks_on()
+  plt.xlabel('Offset uncertainty in tandem phase [mm]')
+  plt.ylabel('Required number of days \n outside tandem phase ')
+  plt.title('Regional offset uncertainty outside a tandem phase')
+  plt.yscale('log')
+  plt.xlim(0,20)
+  plt.gca().set_ylim(top=1e4)
+  plt.show()

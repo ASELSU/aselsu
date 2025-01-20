@@ -3,6 +3,7 @@ import numpy as np
 import sys
 from scipy.stats import t as t_coeff
 from scipy import stats
+from scipy.optimize import curve_fit, minimize_scalar
 from joblib import Parallel, delayed
 
 def progress_bar(start, ii, end):
@@ -62,3 +63,57 @@ def masked_mean_along_axis(arr, axis):
     mean_values[mask_along_axis.values] = np.ma.masked
 
     return mean_values
+
+# Model for the interpolation function
+def f_1_sqrt_n_model(x, a, b, c): # 1/square_root(n)
+    return (a / np.sqrt(x + c)) + b
+
+# Fuction to fit the model on the curves
+def fit_curves(curves_to_fit, start):
+  curves_fitted = []
+  for curve, start_cycle in zip(curves_to_fit, start):
+    # Define the abscissa axis over which interpolating the curve
+    curve_fit_x = np.arange(start_cycle,
+                            len(curve[~np.isnan(curve)])+start_cycle, 1)
+    # Perform the interpolation where the uncertainty values exist (not NaN)
+    res_fit = curve_fit(f_1_sqrt_n_model, curve_fit_x,
+                        curve[~np.isnan(curve)]) # 1/sqrt(n) fit
+    a_fit, b_fit, c_fit = res_fit[0][0], res_fit[0][1], res_fit[0][2]
+
+    # Define the abscissa axis for the plot
+    curve_fit_x_plot = np.arange(1, 90, 1)
+    # Interpolated curve for the plot
+    curve_fit_y = f_1_sqrt_n_model(curve_fit_x_plot, a_fit, b_fit, c_fit)
+    # Store the results of the interpolation
+    curves_fitted.append([curve_fit_x_plot, curve_fit_y, a_fit, b_fit, c_fit])
+
+  return curves_fitted
+
+def compute_required_days_outside_tandem(perf_values, curves_fitted):
+  repeat_cycle_in_days = 9.91564 # Number of days in one cycle on the
+                                 # J3/S6 reference orbit
+
+  # Compute the number of days corresponding to each performance
+  corr_nb_days_outside_tandem_std_main = []
+  corr_nb_days_outside_tandem_std_comp = []
+  for p_val in perf_values:
+    def f_1_sqrt_n_minus_value_unc_main(x):
+      p_val_x = (curves_fitted[0][2] /
+                 np.sqrt(x + curves_fitted[0][4])) + curves_fitted[0][3]
+      return np.abs(p_val_x - p_val)
+    corr_nb_days_outside_tandem_std_main.append(
+        int(np.ceil(minimize_scalar( # Find the number of cycles
+            f_1_sqrt_n_minus_value_unc_main).x * repeat_cycle_in_days)))
+
+    def f_1_sqrt_n_minus_value_unc_comp(x):
+      p_val_x = (curves_fitted[1][2] /
+                 np.sqrt(x + curves_fitted[1][4])) + curves_fitted[1][3]
+      return np.abs(p_val_x - p_val)
+    corr_nb_days_outside_tandem_std_comp.append(
+        int(np.ceil(minimize_scalar( # Find the number of cycles
+            f_1_sqrt_n_minus_value_unc_comp).x * repeat_cycle_in_days)))
+
+  corr_nb_days_outside_tandem_std_main = np.array(corr_nb_days_outside_tandem_std_main)
+  corr_nb_days_outside_tandem_std_comp = np.array(corr_nb_days_outside_tandem_std_comp)
+
+  return corr_nb_days_outside_tandem_std_main, corr_nb_days_outside_tandem_std_comp
