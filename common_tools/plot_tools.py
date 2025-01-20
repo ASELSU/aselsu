@@ -581,9 +581,11 @@ def plot_interpolated_uncertainty_curves(uncertainty_tandem, curves_to_fit,
   plt.title('%s comparison\n%i°*%i° cell grid - REGIONAL'%(mission,dlon,dlat))
   plt.show()
 
+# Function to display the required number of days outside a tandem phase
+# with respect to a continuity performance
 def plot_required_days_outside_tandem(corr_nb_days_outside_tandem_std_main,
                                       corr_nb_days_outside_tandem_std_comp,
-                                      perf_values, mission,
+                                      perf_values, mission, dlon, dlat,
                                       mission_comparison):
   plt.figure()
   # Put an upper limit on the nb of days values
@@ -609,7 +611,7 @@ def plot_required_days_outside_tandem(corr_nb_days_outside_tandem_std_main,
   plt.minorticks_on()
   plt.xlabel('Offset uncertainty in tandem phase [mm]')
   plt.ylabel('Required number of days \n outside tandem phase ')
-  plt.title('Regional offset uncertainty outside a tandem phase')
+  plt.title('Offset uncertainty outside a tandem phase\n%i°*%i° cell grid - REGIONAL'%(dlon,dlat))
   plt.yscale('log')
   plt.xlim(0,20)
   plt.gca().set_ylim(top=1e4)
