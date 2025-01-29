@@ -28,6 +28,7 @@ def load_environment_WP85():
     print('Environment loading....')
     run_command("pip install numpy==2.0.2")
     run_command("pip install xarray==2024.11.0")
+    run_command("pip install matplotlib==3.7.1")
     run_command("pip install netCDF4 gdown palettable")
     run_command("pip install -q condacolab")
     import condacolab
