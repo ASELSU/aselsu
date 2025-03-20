@@ -1,6 +1,7 @@
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import palettable
 import matplotlib.colors as colors
+from matplotlib.colors import LogNorm, PowerNorm
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.offsetbox import AuxTransformBox, VPacker, TextArea, DrawingArea
