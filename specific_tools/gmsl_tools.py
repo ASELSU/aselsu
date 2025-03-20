@@ -7,6 +7,7 @@ from scipy.interpolate import griddata,interp1d
 import statsmodels.api as sm
 
 from aselsu.common_tools.time_tools import julianday_to_decimalyears_array,datetime_to_decimalyears
+from aselsu.common_tools import time_tools, plot_tools
 
 ## Corrections functions
 ### TOPEX-A correction
@@ -114,3 +115,37 @@ def remove_periods_signals(myperiods,time_jdays,ts):
   ts -= fitted_signal
 
   return ts
+
+def gmsl_trend_uncertainty(error_prescription,time_vec,data):
+  cov = data.lntime.covariance_analysis()
+  cov.read_yaml(error_prescription)
+  covar = cov.sigma
+
+  print(f"**Uncertainty computation for {error_prescription}**\n")
+  dates=[]
+  dates = np.array([datetime(1950,1,1) + timedelta(el) for el in time_vec])
+  time = time_tools.datetime_to_decimalyears_array(dates)
+  year_start=dates[0].year
+  year_end=dates[-1].year
+
+  dict_eval = {'redo':1,'number_periods':(year_end-year_start+1),'period_min':1,
+               'number_dates':(year_end-year_start+1),'number_enveloppes':4}
+  dict_interp = {'redo':1,'number_dates':(year_end-year_start+1)*10,
+                 'number_periods':200}
+
+  u = plot_tools.fractal_trend_uncertainties_interp(time,dict_eval, dict_interp,
+                                        covar_mat=covar*1e6, yvar=data*1e3,
+                                        least_squares_method='OLS',verbose=0)
+  start_period = np.where(u['period']>3.)[0][0]
+  period,gmsl_trend_unc=[],[]
+  for i in range(start_period, len(u['period']) - 1):
+    if u['uncertainties'][i, :].mask.all():
+        break 
+    period.append(u['period'][i])
+    gmsl_trend_unc.append(
+        u['uncertainties'][i, :][~u['uncertainties'][i, :].mask][-1] * 365.25
+    )
+  period = np.array(period)
+  gmsl_trend_unc = np.array(gmsl_trend_unc)
+
+  return period, gmsl_trend_unc, u

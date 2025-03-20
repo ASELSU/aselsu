@@ -75,6 +75,35 @@ def load_data_WP85():
     
     return gmsl_file, tpa_corr_file, j3_corr_file, error_prescription
 
+def load_data_err_budget():
+    print("Load GMSL timeserie\n")
+    gmsl_file_id = "1sWWo6zlh3qYB13zOKneiklBWhsgT8XWW"
+    gmsl_output = "MSL_aviso.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={gmsl_file_id}", gmsl_output, quiet=False)
+    gmsl_file = gmsl_output
+
+    print("\nLoad table of budget errors\n")
+    error_budget_url = 'https://drive.google.com/uc?export=download&id=110SsJUTu3wBKhc6OHuun5bNDz08tm3eJ'
+    error_prescription = 'error_budget_table.yaml'
+    r = requests.get(error_budget_url)
+    with open(error_prescription, 'wb') as f:
+        f.write(r.content)
+
+    print("\nLoad S6NG SLR-SUB\n")
+    error_budget_url = 'https://drive.google.com/uc?export=download&id=1_vVcTz_Bkw4kzh1r1Ylwh3yE2wIQxH8C'
+    error_prescription_s6ng = 'error_budget_table_s6ng.yaml'
+    r = requests.get(error_budget_url)
+    with open(error_prescription_s6ng, 'wb') as f:
+        f.write(r.content)
+
+    print("\nLoad S6NG SLR-SUB without GIA & POD\n")
+    error_budget_url = 'https://drive.google.com/uc?export=download&id=1Gstxg7Y8bEdh9eR5gLJw6x_jqRCQ4LQh'
+    error_prescription_only_s6ng = 'error_budget_table_only_s6ng.yaml'
+    r = requests.get(error_budget_url)
+    with open(error_prescription_only_s6ng, 'wb') as f:
+        f.write(r.content)
+
+    return gmsl_file, error_prescription, error_prescription_s6ng, error_prescription_only_s6ng
 
 def load_data_WP83(mission, dlat=1):
     if mission=='J3-S6A':
