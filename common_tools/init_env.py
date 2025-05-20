@@ -75,7 +75,7 @@ def load_data_WP85():
     
     return gmsl_file, tpa_corr_file, j3_corr_file, error_prescription
 
-def load_environment_WP_WTC_CDR():
+def load_environment_WP_WTC_CDR_global():
     print('Environment loading....')
     run_command("pip install numpy==2.0.2")
     run_command("pip install xarray==2024.11.0")
@@ -93,6 +93,25 @@ def load_environment_WP_WTC_CDR():
     run_command("pip install lenapy/.")
     print('.... Done')
     
+def load_environment_WP_WTC_CDR_regional():
+    print('Environment loading....')
+    run_command("pip install numpy==2.0.2")
+    run_command("pip install xarray==2024.11.0")
+    run_command("pip install matplotlib==3.9.0")
+    run_command("pip install netCDF4 gdown palettable")
+    run_command("pip install -q condacolab")
+    import condacolab
+    condacolab.install()
+    run_command("conda install -c conda-forge esmpy -y")
+    print('....loading....')
+    run_command("conda install -c conda-forge xesmf -y")
+    
+    # Clone the repository and install lenapy
+    run_command("git clone https://github.com/CNES/lenapy.git")
+    run_command("pip install lenapy/.")
+    run_command("pip install dask")
+    print('.... Done')
+
 def load_data_WTC_CDR():
     print("Load global WTC timeseries\n")
     wtc_global_file_id = "1KI28Gaj7Iql1VcZgLqHeOOZq5QmBudmx"
