@@ -112,7 +112,7 @@ def load_environment_WP_WTC_CDR_regional():
     run_command("pip install dask")
     print('.... Done')
 
-def load_data_WTC_CDR():
+def load_data_WTC_CDR_global():
     print("Load global WTC timeseries\n")
     wtc_global_file_id = "1KI28Gaj7Iql1VcZgLqHeOOZq5QmBudmx"
     wtc_global_output = "wtc_global.nc"
@@ -120,6 +120,21 @@ def load_data_WTC_CDR():
     wtc_global_file = wtc_global_output
     
     return wtc_global_file
+
+def load_data_WTC_CDR_global():
+    print("Load regional WTC timeseries\n")
+    wtc_regional_file_id = "1e_TLR6umCGBUGxx-MOPBhnGyt--NtLvk"
+    wtc_regional_output = "wtc_regional.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={wtc_regional_file_id}", wtc_regional_output, quiet=False)
+    wtc_regional_file = wtc_regional_output
+    
+    print("Load computed WTC trend uncertainties\n")
+    wtc_trend_results_file_id = "1_LotsUbrNLdZOCS-iwElheOapOdfUoKC"
+    wtc_trend_results_output = "wtc_regional_trend_results.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={wtc_trend_results_file_id}", wtc_trend_results_output, quiet=False)
+    wtc_trend_results_file = wtc_trend_results_output
+    
+    return wtc_regional_file,wtc_trend_results_file
 
 def load_data_err_budget():
     print("Load GMSL timeserie\n")
