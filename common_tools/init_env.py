@@ -99,6 +99,8 @@ def load_data_WTC_CDR():
     wtc_global_output = "wtc_global.nc"
     gdown.download(f"https://drive.google.com/uc?export=download&id={wtc_global_file_id}", wtc_global_output, quiet=False)
     wtc_global_file = wtc_global_output
+    
+    return wtc_global_file
 
 def load_data_err_budget():
     print("Load GMSL timeserie\n")
