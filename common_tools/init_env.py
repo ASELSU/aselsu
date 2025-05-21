@@ -111,7 +111,8 @@ def load_environment_WP_WTC_CDR_regional():
     run_command("pip install lenapy/.")
     run_command("pip install dask")
     run_command("pip install distributed")
-    print('.... Done')
+    run_command("pip install cartopy")
+	print('.... Done')
 
 def load_data_WTC_CDR_global():
     print("Load global WTC timeseries\n")
