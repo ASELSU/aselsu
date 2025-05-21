@@ -110,6 +110,7 @@ def load_environment_WP_WTC_CDR_regional():
     run_command("git clone https://github.com/CNES/lenapy.git")
     run_command("pip install lenapy/.")
     run_command("pip install dask")
+    run_command("pip install distributed")
     print('.... Done')
 
 def load_data_WTC_CDR_global():
@@ -121,7 +122,7 @@ def load_data_WTC_CDR_global():
     
     return wtc_global_file
 
-def load_data_WTC_CDR_global():
+def load_data_WTC_CDR_regional():
     print("Load regional WTC timeseries\n")
     wtc_regional_file_id = "1e_TLR6umCGBUGxx-MOPBhnGyt--NtLvk"
     wtc_regional_output = "wtc_regional.nc"
@@ -134,7 +135,7 @@ def load_data_WTC_CDR_global():
     gdown.download(f"https://drive.google.com/uc?export=download&id={wtc_trend_results_file_id}", wtc_trend_results_output, quiet=False)
     wtc_trend_results_file = wtc_trend_results_output
     
-    return wtc_regional_file,wtc_trend_results_file
+    return wtc_regional_file, wtc_trend_results_file
 
 def load_data_err_budget():
     print("Load GMSL timeserie\n")
