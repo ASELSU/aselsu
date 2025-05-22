@@ -94,25 +94,25 @@ def load_environment_WP_WTC_CDR_global():
     print('.... Done')
     
 def load_environment_WP_WTC_CDR_regional():
-    print('Environment loading....')
-    run_command("pip install numpy==2.0.2")
-    run_command("pip install xarray==2024.11.0")
-    run_command("pip install matplotlib==3.9.0")
-    run_command("pip install netCDF4 gdown palettable")
-    run_command("pip install -q condacolab")
-    import condacolab
-    condacolab.install()
-    run_command("conda install -c conda-forge esmpy -y")
-    print('....loading....')
-    run_command("conda install -c conda-forge xesmf -y")
-    
-    # Clone the repository and install lenapy
-    run_command("git clone https://github.com/CNES/lenapy.git")
-    run_command("pip install lenapy/.")
+	print('Environment loading....')
+	run_command("pip install numpy==2.0.2")
+	run_command("pip install xarray==2024.11.0")
+	run_command("pip install matplotlib==3.9.0")
+	run_command("pip install netCDF4 gdown palettable")
+	run_command("pip install -q condacolab")
+	import condacolab
+	condacolab.install()
+	run_command("conda install -c conda-forge esmpy -y")
+	print('....loading....')
+	run_command("conda install -c conda-forge xesmf -y")
+	
+	# Clone the repository and install lenapy
+	run_command("git clone https://github.com/CNES/lenapy.git")
+	run_command("pip install lenapy/.")
 	run_command("pip install dask==2025.5.1")
-    run_command("pip install distributed==2025.5.1")
-    run_command("pip install cartopy==0.24.1")
-    print('.... Done')
+	run_command("pip install distributed==2025.5.1")
+	run_command("pip install cartopy==0.24.1")
+	print('.... Done')
 
 def load_data_WTC_CDR_global():
     print("Load global WTC timeseries\n")
