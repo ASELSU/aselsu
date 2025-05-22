@@ -617,3 +617,54 @@ def plot_required_days_outside_tandem(corr_nb_days_outside_tandem_std_main,
   plt.xlim(0,20)
   plt.gca().set_ylim(top=1e4)
   plt.show()
+
+
+def covariance_visualization(ln_cov,n=100,cmap='RdBu_r',value_label='',units=''):
+        """Show a vizualisation of the covariance matrix
+        * some random realizations of the matrix
+        * the plot of the squared roots diagonal values (standard error)
+        * the pcolormesh plot of the covariance matrix
+        
+        Parameters
+        ----------
+        ln_cov : lenapy.utils.covariance.covariance 
+            lenapy covariance object to plot         
+        n : int (default=100)
+            number of realizations to plot
+        cmap : string (default='RdBu_r')
+            colormap to use
+        value_label : string (default='')
+            description of the physical quantity
+        unit : string (default='')
+            unit of the physical quantity
+        """
+        fig, ax = plt.subplots(1,3, figsize=(18, 5))
+        ax=ax.ravel()
+
+        eigenvalues,eigenvectors=np.linalg.eigh(ln_cov.sigma)
+        eigenvalues=np.where(eigenvalues<0,0.,eigenvalues)
+        A=np.sqrt(eigenvalues)*eigenvectors
+
+        cov_label = ''
+        err_label = ''
+        if value_label!='':
+            cov_label = f'Covariance of the error on {value_label}'
+            err_label = f'Error on {value_label}'
+        if units!='':
+            cov_label = cov_label + f' [({units})^2]'
+            err_label = err_label + f' [{units}]'
+        mu=0
+        sig=1.
+        for i in range(n):
+            s=np.random.normal(mu,sig,len(ln_cov.time))
+            ax[0].plot(ln_cov.time,np.dot(A,s))
+        ax[0].grid()
+        ax[0].set_title(f'{n} random realizations')
+        ax[0].set_ylabel(err_label)
+        ax[1].plot(ln_cov.time,np.sqrt(ln_cov.sigma.values.diagonal()))
+        ax[1].set_ylim(0)
+        ax[1].grid()
+        ax[1].set_title(f'Standard deviation (square root of diagonal values)')
+        ax[1].set_ylabel(err_label)
+        ln_cov.sigma.plot(ax=ax[2],cmap=cmap,cbar_kwargs={'label':cov_label})
+        ax[2].set_title(f'Covariance matrix')
