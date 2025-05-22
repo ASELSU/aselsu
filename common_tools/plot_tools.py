@@ -638,7 +638,7 @@ def covariance_visualization(ln_cov,n=100,cmap='RdBu_r',value_label='',units='')
         unit : string (default='')
             unit of the physical quantity
         """
-        fig, ax = plt.subplots(1,3, figsize=(18, 5))
+        fig, ax = plt.subplots(1,3, figsize=(27,7))
         ax=ax.ravel()
 
         eigenvalues,eigenvectors=np.linalg.eigh(ln_cov.sigma)
@@ -664,7 +664,8 @@ def covariance_visualization(ln_cov,n=100,cmap='RdBu_r',value_label='',units='')
         ax[1].plot(ln_cov.time,np.sqrt(ln_cov.sigma.values.diagonal()))
         ax[1].set_ylim(0)
         ax[1].grid()
-        ax[1].set_title(f'Standard deviation (square root of diagonal values)')
+        ax[1].set_title(f'Standard deviation \n(square root of diagonal values)')
         ax[1].set_ylabel(err_label)
         ln_cov.sigma.plot(ax=ax[2],cmap=cmap,cbar_kwargs={'label':cov_label})
+        ax[2].set_aspect('equal')
         ax[2].set_title(f'Covariance matrix')
