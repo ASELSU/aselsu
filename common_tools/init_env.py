@@ -109,7 +109,7 @@ def load_environment_WP_WTC_CDR_regional():
     # Clone the repository and install lenapy
     run_command("git clone https://github.com/CNES/lenapy.git")
     run_command("pip install lenapy/.")
-	run_command("pip install dask==2025.5.1")
+    run_command("pip install dask==2025.5.1")
     run_command("pip install distributed==2025.5.1")
     run_command("pip install cartopy==0.24.1")
     print('.... Done')
