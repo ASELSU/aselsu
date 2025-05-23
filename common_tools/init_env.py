@@ -89,7 +89,7 @@ def load_environment_lenapy():
     run_command("conda install -c conda-forge xesmf -y")
     
     # Clone the repository and install lenapy
-    run_command("git clone set lcs+=space:·https://github.com/CNES/lenapy.git")
+    run_command("git clone https://github.com/CNES/lenapy.git")
     run_command("pip install lenapy/.")
    
 
