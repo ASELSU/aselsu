@@ -75,7 +75,7 @@ def load_data_WP85():
     
     return gmsl_file, tpa_corr_file, j3_corr_file, error_prescription
 
-def load_environment_WP_WTC_CDR_global():
+def load_environment_lenapy():
     print('Environment loading....')
     run_command("pip install numpy==2.0.2")
     run_command("pip install xarray==2024.11.0")
@@ -89,30 +89,27 @@ def load_environment_WP_WTC_CDR_global():
     run_command("conda install -c conda-forge xesmf -y")
     
     # Clone the repository and install lenapy
-    run_command("git clone https://github.com/CNES/lenapy.git")
+    run_command("git clone set lcs+=space:·https://github.com/CNES/lenapy.git")
     run_command("pip install lenapy/.")
-    print('.... Done')
-    
-def load_environment_WP_WTC_CDR_regional():
-	print('Environment loading....')
-	run_command("pip install numpy==2.0.2")
-	run_command("pip install xarray==2024.11.0")
-	run_command("pip install matplotlib==3.9.0")
-	run_command("pip install netCDF4 gdown palettable")
-	run_command("pip install -q condacolab")
-	import condacolab
-	condacolab.install()
-	run_command("conda install -c conda-forge esmpy -y")
-	print('....loading....')
-	run_command("conda install -c conda-forge xesmf -y")
-	
-	# Clone the repository and install lenapy
-	run_command("git clone https://github.com/CNES/lenapy.git")
-	run_command("pip install lenapy/.")
+   
+
+def load_environment_lenapy_and_others():
+	load_environment_lenapy()
 	run_command("pip install dask==2025.5.1")
 	run_command("pip install distributed==2025.5.1")
 	run_command("pip install cartopy==0.24.1")
+
+def load_environment_WP_WTC_CDR_global():
+	load_environment_lenapy()
 	print('.... Done')
+
+def load_environment_WP_WTC_CDR_regional():
+	load_environment_lenapy_and_others()
+	print('.... Done')
+ 
+def load_environment_WP81():
+    load_environment_lenapy_and_others()
+    print('.... Done')
 
 def load_data_WTC_CDR_global():
     print("Load global WTC timeseries\n")
@@ -137,6 +134,21 @@ def load_data_WTC_CDR_regional():
     wtc_trend_results_file = wtc_trend_results_output
     
     return wtc_regional_file, wtc_trend_results_file
+
+def load_data_WP81():
+    print("Load regional SWH timeseries\n")
+    ssb_regional_file_id = "1oKfT5RUpY9axcDbN7nFCZsxGrtGOJbAL"
+    ssb_regional_output = "ssb_regional_J3_1Hz.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={ssb_regional_file_id}", ssb_regional_output, quiet=False)
+    ssb_regional_file = ssb_regional_output
+    
+    print("Load computed SSB trend uncertainties\n")
+    ssb_trend_results_file_id = "1UX6ls5wbFaAkh6zl0HzT1If2Cuw86VOL"
+    ssb_trend_results_output = "ssb_regional_trend_results.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={ssb_trend_results_file_id}", ssb_trend_results_output, quiet=False)
+    ssb_trend_results_file = ssb_trend_results_output
+        
+    return ssb_regional_file, ssb_trend_results_file
 
 def load_data_err_budget():
     print("Load GMSL timeserie\n")
