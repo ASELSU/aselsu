@@ -137,18 +137,37 @@ def load_data_WTC_CDR_regional():
 
 def load_data_WP81():
     print("Load regional SWH timeseries\n")
-    ssb_regional_file_id = "1oKfT5RUpY9axcDbN7nFCZsxGrtGOJbAL"
+    ssb_regional_file_id = "1YQ9B0YvAaWcGi5QmqVuFpq8o9sOui0nM"
     ssb_regional_output = "ssb_regional_J3_1Hz.nc"
     gdown.download(f"https://drive.google.com/uc?export=download&id={ssb_regional_file_id}", ssb_regional_output, quiet=False)
     ssb_regional_file = ssb_regional_output
     
     print("Load computed SSB trend uncertainties\n")
-    ssb_trend_results_file_id = "1UX6ls5wbFaAkh6zl0HzT1If2Cuw86VOL"
-    ssb_trend_results_output = "ssb_regional_trend_results.nc"
-    gdown.download(f"https://drive.google.com/uc?export=download&id={ssb_trend_results_file_id}", ssb_trend_results_output, quiet=False)
-    ssb_trend_results_file = ssb_trend_results_output
+    # V1: constant global alpha and alpha uncertainty
+    file_id = "1tAidKV-bUAmVAeozXUw-nasZ5cfMtLR8"
+    file_output = "ssb_trend_results_alpha_global.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={file_id}", file_output, quiet=False)
+    ssb_regional_trend_results_fileV1 = file_output
+    
+    # V2: constant alpha and alpha uncertainty from alpha std
+    file_id = "1fZlh6Vd5CVN3gixJzxUcZN7TsGyNNe34"
+    file_output = "ssb_trend_results_alpha_meanV1.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={file_id}", file_output, quiet=False)
+    ssb_regional_trend_results_fileV2 = file_output
+    
+    # V3: constant alpha and alpha uncertainty from mean regression error
+    file_id = "1nPwm4L20QVKpO97cyJMOOfbtg_Xz88TV"
+    file_output = "ssb_trend_results_alpha_meanV2.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={file_id}", file_output, quiet=False)
+    ssb_regional_trend_results_fileV3 = file_output
+    
+    # V4 time varying alpha and alpha uncertainty, alpha uncertainty from regression error
+    file_id = "1AIM35vt0oC00zCB-_wfD6cRTOpej6NeZ"
+    file_output = "ssb_trend_results_time_varying_alpha.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={file_id}", file_output, quiet=False)
+    ssb_regional_trend_results_fileV4 = file_output
         
-    return ssb_regional_file, ssb_trend_results_file
+    return ssb_regional_file, ssb_regional_trend_results_fileV1, ssb_regional_trend_results_fileV2, ssb_regional_trend_results_fileV3, ssb_regional_trend_results_fileV4
 
 def load_data_err_budget():
     print("Load GMSL timeserie\n")
