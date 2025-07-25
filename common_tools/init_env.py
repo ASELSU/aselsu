@@ -295,3 +295,11 @@ def load_data_S3A(mission,dlon=3,dlat=1):
         print("\n*Error* Missions name incorrect, select 'J2-J3' or 'J3-S6A'\n")
 
     return no_tandem_output, miss_comp
+
+def load_data_short_term():
+    print("Load GMSL timeserie\n")
+    gmsl_file_id = "1tHepuMtQz3uEB0alEdn9yck1TXC5_quk"
+    gmsl_file = "gmsl_03_00_wtcradio.nc"
+    gdown.download(f"https://drive.google.com/uc?export=download&id={gmsl_file_id}", gmsl_file, quiet=False)
+  
+    return gmsl_file
