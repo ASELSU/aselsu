@@ -157,7 +157,6 @@ dependencies:
       - gsw==3.6.20
       - jinja2==3.1.6
       - kiwisolver==1.4.9
-      - lenapy==0.9
       - llvmlite==0.44.0
       - locket==1.0.0
       - markupsafe==3.0.2
