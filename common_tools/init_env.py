@@ -5,6 +5,9 @@ import requests
 import matplotlib as mpl
 import gdown
 
+env_lenapy_yml = 'aselsu/input_data/aselsu_env_with_lenapy.yml'
+env_no_lenapy_yml = 'aselsu/input_data/aselsu_env_without_lenapy.yml'
+
 def config_plot():
     nice_fonts = {
       "font.family": "serif",
@@ -24,28 +27,60 @@ def run_command(command):
     with open("log.txt", "a") as log_file:
         check_call(command, shell=True, stdout=log_file, stderr=log_file)
 
-def load_environment_WP85():
-    print('Environment loading....')
-    run_command("pip install numpy==2.0.2")
-    run_command("pip install xarray==2024.11.0")
-    run_command("pip install matplotlib==3.9.0")
-    run_command("pip install netCDF4 gdown palettable")
-    run_command("pip install -q condacolab")
+def load_colab_environment(yaml_file):
+    """ Installing the required libraries for condacolab. Different libraries, 
+    including lenapy have to be installed in a specific order.      
+    
+    Parameters
+    ----------
+    yaml_file: str
+        Path to the yaml file containing the environnement requirements.
+    """  
+    print('Installing condacolab ...')
+    run_command('pip install condacolab')
     import condacolab
     condacolab.install()
-    run_command("conda install -c conda-forge esmpy -y")
-    print('....loading....')
-    run_command("conda install -c conda-forge xesmf -y")
-    
-    # Clone the repository and install lenapy
-    run_command("git clone https://github.com/CNES/lenapy.git")
-    run_command("pip install lenapy/.")
+
+    print('Installing the required libraries for the conda environment ...')
+    run_command(f'conda env update -n base -f {yaml_file}')   
+
+
+def load_lenapy():    
+    print('Cloning the lenapy git repository ...')
+    run_command('git clone https://github.com/CNES/lenapy.git')
+    print('Installing lenapy ...')
+    run_command('pip install lenapy/.')
+
+def load_environment_WP81():
+    print('Environment loading....')	
+    load_colab_environment(env_lenapy_yml)
+    load_lenapy()
     print('.... Done')
 
 def load_environment_WP83():
     print('Environment loading....')
-    run_command("pip install netCDF4 gdown palettable")
+    load_colab_environment(env_no_lenapy_yml)
     print('.... Done')
+
+def load_environment_WP85():
+    print('Environment loading....')	
+    load_colab_environment(env_lenapy_yml)
+    load_lenapy()
+    print('.... Done')
+
+def load_environment_WP_WTC_CDR_global():
+    print('Environment loading....')	
+    load_colab_environment(env_lenapy_yml)
+    load_lenapy()
+    print('.... Done')
+
+def load_environment_WP_WTC_CDR_regional():
+    print('Environment loading....')	
+    load_colab_environment(env_lenapy_yml)
+    load_lenapy()
+    print('.... Done')
+ 
+
     
 def load_data_WP85():
     print("Load GMSL timeserie\n")
@@ -74,42 +109,6 @@ def load_data_WP85():
         f.write(r.content)
     
     return gmsl_file, tpa_corr_file, j3_corr_file, error_prescription
-
-def load_environment_lenapy():
-    print('Environment loading....')
-    run_command("pip install numpy==2.0.2")
-    run_command("pip install xarray==2024.11.0")
-    run_command("pip install matplotlib==3.9.0")
-    run_command("pip install netCDF4 gdown palettable")
-    run_command("pip install -q condacolab")
-    import condacolab
-    condacolab.install()
-    run_command("conda install -c conda-forge esmpy -y")
-    print('....loading....')
-    run_command("conda install -c conda-forge xesmf -y")
-    
-    # Clone the repository and install lenapy
-    run_command("git clone https://github.com/CNES/lenapy.git")
-    run_command("pip install lenapy/.")
-   
-
-def load_environment_lenapy_and_others():
-	load_environment_lenapy()
-	run_command("pip install dask==2025.5.1")
-	run_command("pip install distributed==2025.5.1")
-	run_command("pip install cartopy==0.24.1")
-
-def load_environment_WP_WTC_CDR_global():
-	load_environment_lenapy()
-	print('.... Done')
-
-def load_environment_WP_WTC_CDR_regional():
-	load_environment_lenapy_and_others()
-	print('.... Done')
- 
-def load_environment_WP81():
-    load_environment_lenapy_and_others()
-    print('.... Done')
 
 def load_data_WTC_CDR_global():
     print("Load global WTC timeseries\n")
