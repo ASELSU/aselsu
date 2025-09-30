@@ -116,8 +116,7 @@ def create_plot_grid(x, y, z, fig, ax, vmin=None, vmax=None, xlabel=None, ylabel
             mpl.rcParams['hatch.linewidth'] = 1
             im3 = ax.contour(x2d, y2d, hatches_values, colors='w',linewidths=2,levels=hatches, norm=LogNorm(), extend='both')
             im4 = ax.contourf(x2d, y2d, hatches_values, colors='none',edgecolor='w',levels=hatches, hatches=hatches_pattern, norm=LogNorm(), extend='both')
-            for i, collection in enumerate(im4.collections):
-                collection.set_edgecolor('w')
+            im4.set_edgecolor('w')
         else:
             im2 = ax.contour(x2d, y2d, z, levels=levels, cmap=cmap, alpha=1., ls='--', extend=extend, norm=LogNorm())
     elif scalemode == 'lin':
@@ -127,8 +126,7 @@ def create_plot_grid(x, y, z, fig, ax, vmin=None, vmax=None, xlabel=None, ylabel
             mpl.rcParams['hatch.linewidth'] = 1
             im3 = ax.contour(x2d, y2d, hatches_values, colors='w',linewidths=2,levels=hatches, extend='both')
             im4 = ax.contourf(x2d, y2d, hatches_values, colors='none',levels=hatches,hatches=hatches_pattern, extend='both')
-            for i, collection in enumerate(im4.collections):
-                collection.set_edgecolor('w')
+            im4.set_edgecolor('w')
         else:
             im2 = ax.contour(x2d, y2d, z, levels=levels, cmap=cmap, alpha=1., ls='--', extend=extend)
     elif powervalue is not None:
