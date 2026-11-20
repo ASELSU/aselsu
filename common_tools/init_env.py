@@ -37,7 +37,7 @@ def load_colab_environment(yaml_file):
         Path to the yaml file containing the environnement requirements.
     """  
     print('Installing condacolab ...')
-    run_command('pip install -q 'condacolab==0.1.*'')
+    run_command('pip install condacolab==0.1.14')
     import condacolab
     condacolab.install()
 
